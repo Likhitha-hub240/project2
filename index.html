@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>💰 Budget & Income Tracker 💰</title>
+  <style>
+    body {
+      background: linear-gradient(to bottom right, #f3e8ff, #ffffff);
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 40px;
+      color: #333;
+    }
+
+    h1 {
+      color: #6a0dad;
+      font-size: 2.2em;
+      margin-bottom: 10px;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .container {
+      background: white;
+      border: 2px solid #c5a3ff;
+      border-radius: 15px;
+      box-shadow: 0 6px 20px rgba(106, 13, 173, 0.15);
+      max-width: 520px;
+      margin: 30px auto;
+      padding: 25px;
+    }
+
+    input, button {
+      font-size: 16px;
+      padding: 10px;
+      margin: 8px;
+      border-radius: 8px;
+      border: 1.5px solid #c5a3ff;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #6a0dad;
+    }
+
+    button {
+      background-color: #b57edc;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #9b59b6;
+    }
+
+    .summary {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+
+    .warning {
+      color: #e74c3c;
+      font-weight: bold;
+    }
+
+    .compliment {
+      color: #2ecc71;
+      font-weight: bold;
+    }
+
+    footer {
+      margin-top: 40px;
+      font-size: 14px;
+      color: #6a0dad;
+    }
+  </style>
+</head>
+<body>
+  <h1>💰 Budget & Income Tracker 💰</h1>
+  <p>Track your income and expenses — and stay within your budget!</p>
+
+  <div class="container">
+    <h3>💵 Add Income</h3>
+    <input type="number" id="income" placeholder="Enter income amount (₹)">
+    <button onclick="addIncome()">Add Income</button>
+
+    <h3>🛍️ Add Expense</h3>
+    <input type="text" id="expenseName" placeholder="Expense name (e.g. Groceries)">
+    <input type="number" id="expenseAmount" placeholder="Amount (₹)">
+    <button onclick="addExpense()">Add Expense</button>
+
+    <button onclick="showSummary()">View Summary</button>
+
+    <div id="output" class="summary"></div>
+  </div>
+
+  <footer>Made with 💜 by Likhitha</footer>
+
+  <script>
+    let income = 0;
+    let expenses = [];
+
+    function addIncome() {
+      const value = parseFloat(document.getElementById('income').value);
+      if (isNaN(value) || value <= 0) {
+        alert('Please enter a valid income amount!');
+        return;
+      }
+      income += value;
+      document.getElementById('income').value = '';
+      document.getElementById('output').innerHTML = `<p>✅ Added Income: ₹${value}</p>`;
+    }
+
+    function addExpense() {
+      const name = document.getElementById('expenseName').value.trim();
+      const amount = parseFloat(document.getElementById('expenseAmount').value);
+
+      if (!name || isNaN(amount) || amount <= 0) {
+        alert('Please enter valid expense details!');
+        return;
+      }
+
+      expenses.push({ name, amount });
+      document.getElementById('expenseName').value = '';
+      document.getElementById('expenseAmount').value = '';
+
+      document.getElementById('output').innerHTML =
+        `<p>📝 Added Expense: <strong>${name}</strong> - ₹${amount}</p>`;
+    }
+
+    function showSummary() {
+      if (income === 0) {
+        document.getElementById('output').innerHTML =
+          '<p>Please add your income first.</p>';
+        return;
+      }
+
+      let totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
+      let balance = income - totalExpenses;
+
+      let list = expenses.map(e => `<li>${e.name}: ₹${e.amount}</li>`).join('');
+
+      let message = '';
+      if (totalExpenses > income) {
+        message = `<p class="warning">⚠️ You have exceeded your budget by ₹${Math.abs(balance)}!</p>`;
+      } else if (totalExpenses === 0) {
+        message = `<p class="compliment">💎 You haven’t spent anything yet — great start!</p>`;
+      } else {
+        message = `<p class="compliment">🎉 Great job! You still have ₹${balance} remaining.</p>`;
+      }
+
+      document.getElementById('output').innerHTML = `
+        <h4>💸 Income: ₹${income}</h4>
+        <h4>🧾 Total Expenses: ₹${totalExpenses}</h4>
+        <ul style="list-style:none; padding:0;">${list}</ul>
+        ${message}
+      `;
+    }
+  </script>
+</body>
+</html>
+
+
